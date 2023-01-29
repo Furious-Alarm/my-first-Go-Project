@@ -1,2 +1,6 @@
 # my-first-Go-Project
-My first Go project for PoPL2023
+
+How to Install Go
+=================
+
+test test
