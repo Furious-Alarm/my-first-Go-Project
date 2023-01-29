@@ -1,30 +1,29 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
 // A single node in a data structure
-type Node struct {
+type node struct {
 	data interface{}
-	next *Node
+	next *node
 }
 
 // A singlely linked list
 type LinkedList struct {
-	head *Node
-	tail *Node
-	Size uint64
+	head *node
+	tail *node
+	Size int
 }
 
-// [METHOD: LinkedList]
 // Will add data to the end of the singlely linked list
 // Args:
-//
-//	data (interface{}): the information to store in the list
+//		data (interface{}): the information to store in the list
 func (list *LinkedList) Append(data ...interface{}) {
 	for i := range data {
-		item := &Node{data[i], nil}
+		item := &node{data[i], nil}
 
 		if list.head == nil {
 			list.head = item
@@ -37,14 +36,52 @@ func (list *LinkedList) Append(data ...interface{}) {
 	}
 }
 
-func (list *LinkedList) Index(item_index int) interface{} {
+// Will delete data from the list at the given index
+// ARGS:
+//		itemIndex (int): The index of the data to delete from the list
+func (list *LinkedList) Delete(itemIndex int) {
+	if itemIndex < 0 || itemIndex >= list.Size {
+		panic("Index out of range for LinkedList")
+	}
+
 	currentNode := list.head
-	for i := 0; i < item_index; i++ {
+	for i := 0; i < itemIndex - 1; i++ {
+		currentNode = currentNode.next
+	}
+	
+	currentNode.next = currentNode.next.next
+}
+
+// Will remove the first instance of a specified piece of data in the list
+// ARGS:
+//		data (interface{}): The data to remove
+func (list *LinkedList) Remove(data interface{}) error {
+	for currentNode := list.head; currentNode != nil; currentNode = currentNode.next {
+		if currentNode.next.data == data {
+			currentNode.next = currentNode.next.next
+			return nil
+		}
+	}
+
+	return errors.New("LinkedList: Data not found in instance")
+}
+
+// Will return the data stored at the node found at a given index
+// ARGS:
+//		itemIndex (int): The index of the data to retrieve
+func (list *LinkedList) Index(itemIndex int) interface{} {
+	if itemIndex < 0 || itemIndex >= list.Size {
+		panic("Index out of range for LinkedList")
+	}
+
+	currentNode := list.head
+	for i := 0; i < itemIndex; i++ {
 		currentNode = currentNode.next
 	}
 	return currentNode.data
 }
 
+// Will display the information in the list in the terminal in a simple format
 func (list *LinkedList) Display() {
 	defer fmt.Println()
 	for currentNode := list.head; currentNode != nil; currentNode = currentNode.next {
@@ -52,8 +89,11 @@ func (list *LinkedList) Display() {
 	}
 }
 
+// Controls the flow of the program
 func main() {
 	var myList LinkedList
-	myList.Append(1, "Bunny", nil,)
+	myList.Append(1, "Bunny", nil, LinkedList{},)
+	myList.Remove(nil)
+	myList.Delete(2)
 	myList.Display()
 }
